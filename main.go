@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/getlantern/systray"
@@ -69,10 +69,11 @@ func getClockTime(tz string) string {
 	return t.In(utc).Format("15:04:05")
 }
 
-func getIcon(s string) []byte {
-	b, err := ioutil.ReadFile(s)
+// getIcon reads an icon file from the given path.
+func getIcon(filePath string) []byte {
+	icon, err := os.ReadFile(filePath)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Printf("Error during downloading icon: %v\n", err)
 	}
-	return b
+	return icon
 }
