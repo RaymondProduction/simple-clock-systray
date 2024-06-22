@@ -17,8 +17,6 @@ import (
 
 var (
 	timezone string
-
-	second int
 )
 
 func main() {
@@ -40,13 +38,14 @@ func onReady() {
 
 	go func() {
 		for {
-			systray.SetTitle(getClockTime(timezone))
+
+			displayTime, second := getClockTime(timezone)
+
+			fmt.Printf("Display time = %s, second =  %d\n", displayTime, second)
+
+			systray.SetTitle(displayTime)
 			systray.SetTooltip(timezone + " timezone")
 			systray.SetIcon(createProgressIcon(float64(second) / float64(60)))
-			second++
-			if second == 60 {
-				second = 0
-			}
 			time.Sleep(1 * time.Second)
 		}
 	}()
@@ -76,11 +75,13 @@ func onExit() {
 	// Cleaning stuff here.
 }
 
-func getClockTime(tz string) string {
+func getClockTime(tz string) (string, int) {
 	t := time.Now()
 	utc, _ := time.LoadLocation(tz)
 
-	return t.In(utc).Format("15:04:05")
+	t2 := t.In(utc)
+
+	return t2.Format("15:04:05"), t2.Second()
 }
 
 // getIcon reads an icon file from the given path.
